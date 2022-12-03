@@ -1,0 +1,6 @@
+blockmatch.cpp
+setup.py
+blockmatch.egg-info/PKG-INFO
+blockmatch.egg-info/SOURCES.txt
+blockmatch.egg-info/dependency_links.txt
+blockmatch.egg-info/top_level.txt
