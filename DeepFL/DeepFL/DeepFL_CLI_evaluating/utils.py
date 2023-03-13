@@ -108,7 +108,9 @@ def model_inceptionresnet_multigap(input_shape=(None, None, 3),
         return (model, gap_sizes)
     else:
         return model
-
+    
+def softmax(vector, T=1):
+    return (tf.math.exp(vector/T)) / tf.math.reduce_sum(tf.math.exp(vector/T))
 
 def fc_model_softmax(input_num=16928):
     input_ = Input(shape=(input_num,))
@@ -121,7 +123,7 @@ def fc_model_softmax(input_num=16928):
     x = Dense(256, kernel_initializer='he_normal', activation='relu')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.5)(x)
-    pred = Dense(2, activation='softmax')(x)
+    pred = Dense(2, activation=softmax)(x)
 
     model = Model(input_,pred)
     return model
@@ -130,8 +132,7 @@ def take_from_vector(data, indxs):
     new_data = np.squeeze(data[indxs])
     return new_data
     
-def predict(x, y=None, model_gap=None, model=None, model_cnn=None, is_norm=False, 
-            pca_mg=None, pca_cnn=None, pca_connected=None, take=None):
+def predict(x, y=None, model_gap=None, model=None, model_cnn=None, take=None):
     '''
     Does prediction on given numpy image using
     model_gap and model
@@ -141,23 +142,12 @@ def predict(x, y=None, model_gap=None, model=None, model_cnn=None, is_norm=False
     except:
         x = x[None] #changed 02.08 for evaluator visualizing predictions
         feat_mg = model_gap.predict(x, verbose=0)
-        
-    if pca_mg:
-        feat_mg = pca_mg.transform(feat_mg) 
-
+       
     if model_cnn:
-        feat_cnn = model_cnn.predict(y, verbose=0)
-        if is_norm:
-            feat_cnn = normalize_feat_vector(feat_cnn)
-        if pca_cnn:
-            feat_cnn = pca_cnn.transform(feat_cnn)
-            
+        feat_cnn = model_cnn.predict(y, verbose=0)  
         feat = np.concatenate((np.squeeze(feat_mg), np.squeeze(feat_cnn)))
-        if pca_connected:
-            feat = pca_connected.transform(feat[None])
         if take is not None:
             feat = take_from_vector(feat, take)
-     
         feat = feat[None]
     else:
         feat = feat_mg
@@ -165,8 +155,7 @@ def predict(x, y=None, model_gap=None, model=None, model_cnn=None, is_norm=False
 
     return pred_score
     
-def predict_from_path(model_gap, model, paths, resize_func=None, size=None, for_all=False, save_results=None, 
-                      save_to=None, model_cnn=None, is_norm=False, pca_mg = None, pca_cnn = None, pca_connected=None, take=None):
+def predict_from_path(model_gap, model, paths, resize_func=None, size=None, for_all=False, model_cnn=None, take=None):
     #always requires list of paths
     predicted = []
     
@@ -175,19 +164,16 @@ def predict_from_path(model_gap, model, paths, resize_func=None, size=None, for_
         img_cnn = None
         if model_cnn:
             img_cnn = read_img(path=path, resize_func=resize_add_border, size=(600, 600))
-        pred_score = predict(img_mg, img_cnn, model_gap, model, model_cnn, is_norm, pca_mg, pca_cnn, pca_connected, take)
+        pred_score = predict(img_mg, img_cnn, model_gap, model, model_cnn, take)
         predicted.append(pred_score)
     
     predicted = np.array(predicted)
     predicted = np.squeeze(predicted)
-    
-    if save_results:
-        np.save(save_to, np.argmax(predicted, axis=-1))
-        
+  
     return predicted
 
 
-def plot_pred_orig(model_gap, model, imgs_bench, label=None, row_count=2, column_count=10, resize_func=None, size=None, for_all=False, model_cnn=None, is_norm=False, pca_mg=None, pca_cnn=None, pca_connected=None, take=None):
+def plot_pred_orig(model_gap, model, imgs_bench, label=None, row_count=2, column_count=10, resize_func=None, size=None, for_all=False, model_cnn=None, take=None):
     f, axarr = plt.subplots(row_count, column_count,  figsize=(20,5))
 
     for i, path in enumerate(imgs_bench):
@@ -200,7 +186,7 @@ def plot_pred_orig(model_gap, model, imgs_bench, label=None, row_count=2, column
         if model_cnn:
             img_cnn = read_img(path=path, resize_func=resize_add_border, size=(600, 600))
             
-        pred_score = predict(img_mg, img_cnn, model_gap, model, model_cnn, is_norm, pca_mg, pca_cnn, pca_connected, take)
+        pred_score = predict(img_mg, img_cnn, model_gap, model, model_cnn, take)
 
         im = cv2.imread(path)
         im = cv2.resize(im, (400, 400))
@@ -218,9 +204,6 @@ def plot_pred_orig(model_gap, model, imgs_bench, label=None, row_count=2, column
         f.suptitle('DeepFL Predictions', fontsize=17)
     plt.setp(plt.gcf().get_axes(), xticks=[], yticks=[])
     plt.show()
-
-
-
 
 def read_img(path, preprocess=True, resize_func=None, size=None, for_all=False):
     im = Image.open(path).convert('RGB')
@@ -247,20 +230,11 @@ def calc_metrics(y_true, y_pred):
     print(f'Precision: {precision} %')
     print(f'Recall: {recall} %')
 
-
-def pca_transform(vector, path):
-    pca = pk.load(open(path,'rb'))
-    return pca.transform(vector)
-
 def preproccess_img(x):
     x = np.expand_dims(x, axis=0)
     x = x / 255
     
     return x
 
-
 def generate_root_path():
-    if glob('Data/AesthAI/alm/splitted/alm_train/images/good/good1/*'): #or if os.path.exists('D:Data/AesthAI')
-        return 'D:'
-    else:
-        return ''
+    return '../'

@@ -1,17 +1,4 @@
-import random
-import os
-
 import argparse
-import tensorflow as tf
-import tensorflow_hub as hub
-from keras.layers import *
-from keras.models import Model
-from keras.applications import *
-from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
-
-from PIL import Image
-from glob import glob
-from numpy.random import rand
 from utils import *
     
 def read_args():
@@ -21,61 +8,38 @@ def read_args():
 	parser.add_argument('-w', '--weights_path', required=False,
                                      help='weights path')
 	parser.add_argument('-v', '--visualize', required=False)
-	parser.add_argument('-p', '--pca', required=False,  default='False', 
-                                    help='true to use pca')
-	parser.add_argument('-ga', '--genetic_algorithm', required=False,default='True',
-                                    help='true to use genetic algorithm indices')
-    
-
+        
 	args = parser.parse_args()
+	return args.data_path, args.weights_path, args.visualize
 
-	return args.data_path, args.weights_path, args.visualize, args.pca, args.genetic_algorithm
-
-def evaluator(path, weights_path, genetic_algorithm):
+def evaluator(path, weights_path, for_all=True):
 	model_gap = model_inceptionresnet_multigap()
-	if genetic_algorithm:
-		input_num = 5000
-		indxs = np.load('models/Indices/best_solution.npy')
-		pca_mg = None
-		pca_cnn = None
+	input_num = 5000
+	if for_all == True:
+		indxs = np.load('models/Indices/best_solution_2.npy')            
 	else:
-		input_num = 9744
-		pca_mg = pk.load(open('models/PCA/pca_mg.pkl','rb'))
-		pca_cnn = pk.load(open('models/PCA/pca_cnn.pkl','rb')) 
-		indxs = None               
+		indxs = np.load('models/Indices/best_solution_1.npy')   
 	model = fc_model_softmax(input_num=input_num)
 	model.load_weights(weights_path)
-	model_CNN = tf.keras.Sequential([hub.KerasLayer("https://tfhub.dev/tensorflow/efficientnet/b7/feature-vector/1",trainable=False) ])
-    
-   
-    
-	predicted = predict_from_path(model_gap=model_gap, model=model, paths=[path], resize_func=resize_max, size=(996,996), for_all=False, save_results=None, save_to=None, model_cnn=model_CNN,take=indxs)
+	model_CNN = tf.keras.Sequential([hub.KerasLayer("https://tfhub.dev/tensorflow/efficientnet/b7/feature-vector/1", trainable=False)])    
+	predicted = predict_from_path(model_gap=model_gap, model=model, paths=[path], resize_func=resize_max, size=(996, 996), for_all=for_all, model_cnn=model_CNN,take=indxs)
 	return predicted
 
 
 if __name__ == '__main__':
-	data_path, weights_path, visualize, pca, genetic_algorithm= read_args()
-	if pca=='True':
-		pca = True
-	else:
-		pca = False
-	if genetic_algorithm=='True':
-		genetic_algorithm = True
-	else:
-		genetic_algorithm = False
- 
-                        
-	if pca == genetic_algorithm:
-		raise ValueError('Choose one method pca or ga, this arguments must have opposite values! Default values are pca = False, ga = True! ')
+	data_path, weights_path, visualize = read_args()
 
-                        
-	if weights_path == None and genetic_algorithm == True:
-		weights_path = 'models/Softmax/Multigap_CNN/best_solution_GA_custom.hdf5'
-      
-	elif weights_path == None and pca == True:
-		weights_path = 'models/Softmax/Multigap_CNN/model_fc_softmax_MG_8k_B7_1k_600x600.hdf5'
-
-	predicted = evaluator(data_path, weights_path, genetic_algorithm)
+	if weights_path == None:
+		weights_path = 'models/Multigap_CNN/best_solution_2.hdf5'
+		for_all = True        
+	elif weights_path != None:
+		if '1' in weights_path:
+			for_all=False
+		else:
+			for_all=True            
+        
+        
+	predicted = evaluator(data_path, weights_path, for_all=for_all)
 	is_aesth = np.argmax(predicted, axis=-1) 
 
 	if is_aesth:
@@ -87,5 +51,6 @@ if __name__ == '__main__':
 		img = Image.open(data_path)
 
 		plt.imshow(img)
-		plt.title(f'Prediction on this image: {is_aesth}  ({round(np.sort(predicted)[-1] * 100,2)} %) ')
+		plt.title(f'Prediction on this image: {is_aesth}  ({round(np.sort(predicted)[-1] * 100, 2)} %) ')
 		plt.show()
+

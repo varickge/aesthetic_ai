@@ -4,7 +4,7 @@
 Model takes images from path and evaluates content and technical parameters, returns 0 or 1.  
 
 <p align="center">
-  <img src="project_images/project.png" style='width:60%; background-color: white'>
+  <img src="project_images/project.png" style='width:40%; background-color: white'>
 </p>
 
 Developing an AI which will predict if the input image is aesthetic or not.
@@ -21,7 +21,7 @@ Developing an AI which will predict if the input image is aesthetic or not.
     Qualifications:
     Neural Networks (CNN, Fully-Connected, Feature extractor), Machine Learning,
     Supervised Learning, Statistics, Knowledge distillation, Explainable AI,
-    Dimensionality Reduction, PCA, ICA, Tensorflow, Python, OOP,  Numpy, Big Data
+    Dimensionality Reduction, Genetic Algorithm, PCA, ICA, Tensorflow, Python, OOP,  Numpy, Big Data
     Data Augmentation, Git, OpenCV, Jupyter Notebook
 ____
 ____
@@ -30,18 +30,34 @@ ____
 
 <table style="width:100%">
   <tr>
+    <th> </th>
     <th>Benchmark1</th>
     <th>Benchmark2</th>
+    <th>Joint Benchmark</th>
     <th>Alm Benchmark</th>
     <th>Custom Benchmark</th>
     <th>Coco Benchmark</th>
+    <th>Test Data</th>
   </tr>
   <tr>
-    <td>90.9%</td>
-    <td>90.5%</td>
-    <td>94%</td>
-    <td>94%</td>
-    <td>94.6%</td>
+    <td>AI_1</td>
+    <td>92.8%</td>
+    <td>94.7%</td>
+    <td>94.5%</td>
+    <td>95.5%</td>
+    <td>92.5%</td>
+    <td>94.5%</td>
+    <td>96.64%</td>
+  </tr>
+   <tr>
+    <td>AI_2</td>
+    <td>84.7%</td>
+    <td>95.8%</td>
+    <td>94.8%</td>
+    <td>96.0%</td>
+    <td>96.5%</td>
+    <td>98.9%</td>
+    <td>97.0%</td>
   </tr>
 </table>
 
@@ -76,24 +92,48 @@ Test data:
          --> 0 aesthetic
          --> 1000 not aesthetic
 
-___
----
+   - Test Data:            1400
+
+         --> 700 aesthetic
+         --> 700 not aesthetic
+
+----------------------
+----------------------
+
+## Results demonstration on benchmark data  
+
+<p align="center">
+  <img src="project_images/test_on_bad.png" style='width:35%; background-color: white'>
+</p>
+
+-------------------------
+
+<p align="center">
+  <img src="project_images/test_on_good.png" style='width:38%; background-color: white'>
+</p>
+
+For each image numbers demonstrate model's prediction and it's confidence.
+
+-------------------
+-------------------
 
 ## 4. Model
 
-###Model architecture and hyper-parameters were chosen based on the performance on the validation set.
+### Model architecture and hyper-parameters were chosen based on the performance on the validation set.
 
 At first the network  resizes input image (max_resize 996x996) and gives resized image to the MultiGap network , 
 in parallel of this, resizes input image with borders (resize_with _borders 600x600) and gives resized image to 
-the CNN( EfficientNetB7).MultiGap returns a vector of dimensions 1x16928, after net reduces dimensions with PCA 
-to 1x8464. Net  does the same with CNN’s feature vector (1x2560 → 1x1280),then concatenates two vectors
-(dimension will be 1x9744) and gives it to the Fully Connected network , which will return prediction.
+the CNN( EfficientNetB7).MultiGap returns a vector of dimension 1x16928 concats with 2560 vector from CNN, 
+after features are selected using 1x5000 solution from Genetic Algorithm and gives it to the Fully Connected network,
+which will return prediction.
 
 
-![App Screenshot](project_images/diagram.png)
+<p align="center">
+  <img src="project_images/diagram.png" style='width:50%; background-color: white'>
+</p>
 
 ----
----
+----
 ### 4.1 MultiGap 
 
 MultiGap(Multi-pooled inception network)
@@ -120,7 +160,7 @@ through the use of 1 × 1 convolutions before the expensive 3 × 3 and 5 × 5 co
 
 
 <p align="center">
-  <img src="project_images/Inception_module.png" style='width:50%; background-color: white'>
+  <img src="project_images/Inception_module.png" style='width:40%; background-color: white'>
 </p>
 
 To construct network MultiGAP, the final three inception modules are removed and a new “GAP block” is attached to each 
@@ -128,7 +168,7 @@ inception module. Each GAP block consists of an additional convolution layer fol
 layer, which reduces the feature maps to a 1-D vector of weights (see at the figure below). 
 
 <p align="center">
-  <img src="project_images/Gap_block.png" style='width:50%; background-color: white'>
+  <img src="project_images/Gap_block.png" style='width:40%; background-color: white'>
 </p>
 
 GAP layers are useful replacements for fully connected layers.
@@ -163,7 +203,7 @@ predict objective quality scores from multiple FR-IQA methods rather than from a
 CNN body reduces the risk of over-fitting.
 
 <p align="center">
-  <img src="project_images/FR_IQA.png" style='width:60%; background-color: white'>
+  <img src="project_images/FR_IQA.png" style='width:50%; background-color: white'>
 </p>
 
 
@@ -198,7 +238,7 @@ EfficientNet-B7 architecture
 </p>
 
 <p align="center">
-  <img src="project_images/EfficientNetB7.png" style='width:70%; background-color: white'>
+  <img src="project_images/EfficientNetB7.png" style='width:50%; background-color: white'>
 </p>
 
 EfficientNet-B7 network has a 64.097.680 parameters. <br>
@@ -212,7 +252,7 @@ MBconv1 and MBconv6 architecture
 
 
 <p align="center">
-  <img src="project_images/MBNet_conv.png" style='width:50%; background-color: white'>
+  <img src="project_images/MBNet_conv.png" style='width:40%; background-color: white'>
 </p>
 
 EfficientNet-B7 achieves state-of-the-art 84.3% top-1 accuracy on ImageNet,  while being 8.4x smaller and 6.1x faster
@@ -229,7 +269,7 @@ a concatenated feature vector as an input, and outputs a probability score for e
 
 
 <p align="center">
-  <img src="project_images/FC.png" style='width:50%; background-color: white'>
+  <img src="project_images/FC.png" style='width:40%; background-color: white'>
 </p>
 
 ----
@@ -241,177 +281,16 @@ Model training:
 
     --> Extracting train image multigap features and saving with .json
 
-    --> Extracting train image cnn features and saving
+    --> Extracting train image cnn features and saving.
 
-    --> Transformed multigap and cnn features. 
-
-    --> Loading cnn features and multigap features from .json. Concatenate  and train with FC
+    --> Loading cnn and multigap features, concatenating and selecting 5000 features with Genetic Algorithm and train FC.
 
 
 ----
 ____
 ### Usage
 
-### 1. Principal Component Analysis (PCA)
-The goal of principal component analysis is to compute the most meaningful
-basis to re-express a data set. X is the original data set, where each column is
-a single sample of our data set. In the case here X is an m x n matrix where m
-is the number of features and n is the number of data points. Let Y be another
-m x n matrix composed by applying a linear transformation P on our X. X is
-the original recorded data set and Y is a re-representation of that data set
-
-
-<p align="center">
-  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;PX&space;=&space;Y&space;" style='width: 200px; height: 40px; background-color: white; '>
-  
-  The rows of P are a new set of basis vectors for representing columns of X.
-The row vectors {
-    <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}p_1,&space;.&space;.&space;.&space;,&space;p_m&space;" style='width: 55px; height: 9px; background-color: white; '>
-} in the transformation P will become the principal
-components of X.
-  Another thing to know is covariance.
-Covariance measures the degree of
-the linear relationship between two variables. We define the covariance matrix
-C. which is a symmetric m x m matrix, representing the covariance between
-features. The diagonal terms of C are the variance of particular features on the
-span of our data.
-The off - diagonal terms of C are the covariances between
-features. Thus, we want our C to be diagonal, because we want the covariance
-between features to be 0.
-We also want the variances on the diagonal to be
-maximized.
-
-We define a new matrix
-<img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}&space;A&space;\equiv&space;&space;XX^{T}" style='width: 80px; height: 8px; background-color: white; '>
-(the covariance matrix for our X data) where A is symmetric.
-</p>
-
-<p align="center">
-  <img src="https://latex.codecogs.com/svg.image?\inline \bg{white}C_Y = YY^{T} = (PX)(PX)^{T} = PXX^{T}P^{T} = P(XX^{T})P^{T} = PAP^{T} \" style='width: 60%; background-color: white; '>
-
-  A symmetric matrix (A) is diagonalized by an orthogonal matrix of its eigenvectors. 
-The matrix P is selected to be a matrix where each row 
-  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}p_i" style='width: 1.5%; background-color: white; '>
- is an eigenvector of 
- <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}&space;XX^{T}" style='width: 3%; background-color: white; '>
-. So 
-<img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}&space;P&space;=&space;&space;E^{T}" style='width: 5%; background-color: white; '>
-</p>
-
-<p align="center">
- <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;A&space;=&space;EDE^{T}&space;" style='width: 300px; height:40px; background-color: white; '>
-</p>
-
-Where D is the Diagonal matrix (which will be the covariance matrix of the output Y).
- Thus, we redefine 
-  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;A&space;=&space;P^{T}DP&space;" style='width: 7%; background-color: white; '>
-to
-  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;EDE^{T}&space;" style='width: 4%; background-color: white; '>
-
-<p align="center">
-  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}C_Y&space;=&space;PAP^{T}&space;=&space;P(P^{T}DP)P^{T}=(PP^{T})D(PP^{T})&space;=&space;(PP^{-1})D(PP^{-1})&space;=&space;D" style='width: 1000px; height: 40px; background-color: white; '>
-
-So the diagonal matrix D is computed, which represents the covariance of our Y output. 
-That means that Y has 0 covariance between features and maximized variance for each feature. 
-For dimensionality reduction the selected P transform matrix contains only a desired number of 
-components (eigenvectors with larger (sorted) eigenvalues). After that the XP dot product 
-is computed and results in Y output..  	
-In our case 8464 was selected to be the number of components to reduce MultiGap features,
- and 1280 to reduce CNN features. Each of the 2 PCA models was separetly fitted on ~80000 
-training data points (16928x80000 matrix extracted from MultiGap and 2560x80000 matrix 
-extracted from CNN). After the fitting process the models were saved. Now, during each 
-prediction the feature vector is reduced by passing through the corresponding model 
-(pca_cnn or pca_mg), and only after that enters the fully connected part (which was trained 
-on pca-reduced feature vectors for the 80000 data points (16928 -->8464 for MG and 2560 -->1280 for CNN).
-</p>
-
-### 2. XAI
-
-Explainable artificial intelligence (XAI) is a set of processes and methods that allows human
-users to comprehend and trust the results and output created by machine learning algorithms.
-Explainable AI is used to describe an AI model, its expected impact and potential biases.
-It helps characterize model accuracy, fairness, transparency and outcomes in AI-powered decision making.
-Explainable AI is crucial for an organization in building trust and confidence when putting 
-AI models into production. AI explainability also helps an organization adopt a responsible approach to AI development.
-
-<p align="center">
-  <img src="project_images/XAI.png" style='width:60%; background-color: white'>
-</p>
-
-The Explainable AI (XAI) program aims to create a suite of machine learning techniques that:
-
-    1.Produce more explainable models, while maintaining a high level of learning performance (prediction accuracy)
-    2.Enable human users to understand, appropriately trust, and effectively manage the emerging generation of artificially
-    intelligent partners.
-----
-
-#### 2.1 Shap
-
-SHAP (Shapley Additive Explanations) by Lundberg and Lee (2016) is a method to explain individual
-predictions, based on the game theoretically optimal Shapley values. 
-The goal of SHAP is to explain the prediction of an instance x by computing the contribution of each feature 
-to the prediction. The SHAP explanation method computes Shapley values from coalitional game theory. 
-The feature values of a data instance act as players in a coalition. Shapley values tell us how to fairly 
-distribute the “payout” (= the prediction) among the features. A player can be an individual feature value, 
-e.g. for tabular data. A player can also be a group of feature values. For example to explain an image, pixels
-can be grouped to superpixels and the prediction distributed among them. One innovation that SHAP brings to the 
-table is that the Shapley value explanation is represented as an additive feature attribution method, a linear model.
-That view connects LIME and Shapley values. SHAP specifies the explanation as
-
-
-<p align="center">
- <img src="https://latex.codecogs.com/svg.image?g({z}')&space;=&space;\phi&space;_{0}&space;&plus;&space;\sum_{j=1}^{M}\phi&space;_{j}{z}'_{j}" style='width: 30%; background-color: white; '>
-
-where g is the explanation model, 
-<img src="https://latex.codecogs.com/svg.image?{z}'&space;\epsilon&space;&space;\begin{Bmatrix}0&space;&&space;&space;1\\\end{Bmatrix}^{M}" style='width: 7%; background-color: white; '>
-is the coalition vector, M is the maximum coalition size and  
-<img src="https://latex.codecogs.com/svg.image?\phi_{j}&space;\epsilon&space;R" style='width: 4%; background-color: white; '>
-is the feature attribution for a feature j, the Shapley values.
-</p>
-
-
-<p align="center">
-  <img src="project_images/Shap.png" style='width:60%; background-color: white'>
-</p>
-
-In this project, Shap explains why the model made such a prediction (aesthetic or not aesthetic).
-The top figure shows the result of Shap. The red ones are the segments that contributed to the prediction,
-and the blue ones counteracted to the prediction.
-
--------
-#### 2.2 Lime
-
-The beauty of LIME(Local Interpretable Model-agnostic Explanations) its accessibility and simplicity. 
-The core idea behind LIME though exhaustive is really intuitive and simple.
-
-    1.Model agnosticism refers to the property of LIME using which it can give explanations for any 
-      given supervised learning model by treating as a ‘black-box’ separately. This means that LIME can 
-      handle almost any model that exists out there in the wild!
-    2.Local explanations mean that LIME gives explanations that are locally faithful within the 
-      surroundings or vicinity of the observation/sample being explained.
-
-
-When given a prediction model and a test sample, LIME does the following steps:
-
-    1.Sampling and obtaining a surrogate dataset: LIME provides locally faithful explanations around
-      the vicinity of the instance being explained. By default, it produces 5000 samples(in this project num_samples=1000)
-      of the feature vector following the normal distribution. Then it obtains the target variable for these 
-      5000 samples using the prediction model, whose decisions it’s trying to explain.
-    2.Feature Selection from the surrogate dataset: After obtaining the surrogate dataset, it weighs
-      each segment according to how close they are from the original sample/observation. Then it uses a feature
-      selection technique like Lasso to obtain the top important features.
-
-<p align="center">
-  <img src="project_images/Lime.png" style='width:60%; background-color: white'>
-</p>
-
-In the top figure the green ones are the segments that contributed to the prediction,
-and the red ones counteracted to the prediction.
-
------
------
-
-### 3. Genetic Algorithm
+### 1. Genetic Algorithm
 Genetic algorithms are a particular class of evolutionary algorithms (also known as evolutionary computation) 
 that use techniques inspired by evolutionary biology such as inheritance, mutation, selection, and crossover 
 (also called recombination). It is based on Charles Darwin's theory of natural evolution and uses the principles
@@ -457,95 +336,26 @@ expectation is that the average fitness of the population will increase each rou
   <img src="project_images/GA_components.png" style='width:40%; background-color: white'>
 </p>
 
-#### Population initialization
+--------------
 
-Population Initialization in Genetic Algorithms
+### Population/Initialization/Generation
 
-Population Initialization is the first step in the Genetic Algorithm Process. Population is a subset of solutions 
-in the current generation. Population P can also be defined as a set of chromosomes. The initial population P(0), 
-which is the first generation is usually created randomly. In an iterative process, populations P(t) at generation 
-t (t =1,2,....) are constituted. When dealing with genetic algorithms, the diversity of the population should be
-maintained otherwise it might lead to convergence of algorithms before reaching a global optimum.
-
-
-### Generation Gap
-
-It is a special term which varies between 0<=G<=1 . It is defined as the proportion of chromosomes in the population
-which are replaced in each generation.(It is the ratio of children of individuals in the previous generation to the 
-population size). If G=0.9, it means that 90% chromosomes from the old population are replaced by 90% best found 
-chromosomes from the new population while preserving 10% best found chromosomes from the old population into the 
-new population. When G increases global search capability increases while local search capability decreases.
+100 vectors with shape (5000) that contain the indices of features to be selected are initialized and form the 
+first population. During a generation, the algorithm iterates over all 100 vectors and trains FC using 
+the selected features. A fitness score is assigned to each vector (fit score is the accuracy on test data).
 
 -----------
 
 ### Selection
 
 <p align="center">
-  <img src="project_images/selection.png" style='width:60%; background-color: white'>
+  <img src="project_images/selection.png" style='width:40%; background-color: white'>
 </p>
 
-#### Fitness Proportionate Selection
-
-In this method, an individual can become a parent with a probability which is proportional to its fitness. 
-Therefore, fitter individuals have a higher chance of reproduction and propagating their features to the next
-generation.Thus this applies a selection pressure to the more fit individuals in the population, evolving better 
-individuals over time.Two implementations of fitness proportionate selection are possible−Roulette Wheel Selection
-and Stochastic Universal Sampling.
-
-#### Roulette Wheel Selection
-
-Selection in this method is proportionate to the fitness of an individual. Higher the
-fitness of an individual,higher the chances of getting selected.(Higher the fitness
-greater the pie on the wheel and therefore a greater chance of landing in front of
-the fixed point when the wheel is rotated.)
-
-<p align="center">
-  <img src="project_images/roulette.png" style='width:40%; background-color: white'>
-</p>
-
-For the implementation of the algorithm we get probabilities of each chromosome
-which are equal to fitness of each chromosome divided by the sum of all fitnesses.
-Then we pick chromosomes according to their probability. This process is repeated
-until the desired number of individuals is selected.
-
-
-----------------------
-
-#### Ordinal based methods
-
-#### Ranking selection
-
-Roulette selection will have problems when the fitness differs very much. For
-example, if the best chromosome fitness is 90% of all the roulette wheel then other
-chromosomes will have very few chances to be selected.
-Rank selection first ranks the population and then every chromosome receives
-fitness from this ranking. The worst will have fitness 1, second 2 etc.
-
-<p align="center">
-  <img src="project_images/ranking.png" style='width:60%; background-color: white'>
-</p>
-
-
-Advantages:The advantage of this method is that it can prevent very fit individuals
-from gaining control early at the expense of less fit ones, which would reduce the
-population's genetic diversity and might block attempts to find an acceptable
-solution.
-
-Disadvantages: The disadvantage of this method is that it required sorting the
-entire population by rank which is a time consuming procedure
-
-------------------
-#### Threshold based
-
-#### Truncation selection
-It is an artificial selection method which is used by parents for large populations/mass selection.
-Truncation selection, individuals are sorted according to their fitness. Only the best
-individuals are selected as parents. Truncation threshold Trunc is used as the parameter for truncation selection.
-Trunc indicates the proportion of the population to be selected as parents and takes values
-ranging from 50%-10%. Individuals below the truncation threshold do not produce offsprings.
-
-You can see other selection methods in this link
-https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
+After the generation ends, the algorithm enters the phase of selection. During selection, the vectors in population are
+sorted based on their fit scores. The 2 best vectors will be kept for the next generation. The top 50 vectors based on 
+their fit scores, including the 2 to be kept in the next gen, are selected for crossover. After crossover, the 48 parents
+(not the 2 best that will be kept) are selected for mutation.
 
 ------------------
 
@@ -556,120 +366,188 @@ and one or more off-springs are produced using the genetic material of the paren
 GA with a high probability.
 
 <p align="center">
-  <img src="project_images/crossover.png" style='width:60%; background-color: white'>
+  <img src="project_images/crossover.png" style='width:40%; background-color: white'>
 </p>
 
-#### Single-Point Crossover
- 
-Single-Point Crossover - Select a crossover point at random and
-swap the bits at the right site
+The parents that are selected during the selection step enter the crossover function. We select n parents from all the 50
+ parents to produce 1 child.  For example, (0, 1, ... n) parents will produce the first child, (1, 2, ... n+1) parents will 
+ produce the second child, etc. Thus we will have 50 children in the end. The indices that repeat more in the n parents will
+be prioritized to be included in the child solution.
+After the crossover, the population of 50 children will replace the 50 worst solutions in the population
 
-<p align="center">
-  <img src="project_images/single_point.png" style='width:40%; background-color: white'>
-</p>
-
-#### Two-point Crossover
-
-Two-Point Crossover - Select a crossover points at random and
-swap the bits at the middle site.
-
-<p align="center">
-  <img src="project_images/two_point.png" style='width:40%; background-color: white'>
-</p>
-
-#### Multi-Point Crossover
-
-Multi-Point Crossover - Select multiple crossover points at random
-and swap the bits at the alternate sites.
-
-<p align="center">
-  <img src="project_images/multi_point.png" style='width:40%; background-color: white'>
-</p>
-
-You can see other crossover methods in this link
-https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_crossover.htm
-
------
+-------------------
 
 ### Mutation
 
 Mutation may be defined as a small random tweak in the chromosome, to get a new solution.
 It is used to maintain and introduce diversity in the genetic population.
 
-#### Bit Flip Mutation
+The mutation function takes the solutions selected during the selection step. It keeps a given % of genes in each solution, and mutates the other genes. The mutation randomly takes a number from range(19488) (all the available indices to be included in the solution), and places it in place of the gene to be mutated. The mutation is done so that all indices in a vector remain unique.
+After mutation, the whole mutated population is placed in the same place from where it was selected during selection ([2, 50] lines in our population matrix)
 
-In this bit flip mutation, we select one or more random bits and flip them.
+------------------
+------------------
 
-<p align="center">
-  <img src="project_images/bit_flip.png" style='width:60%; background-color: white'>
-</p>
 
-#### Random Resetting
+### 2. XAI
 
-Random Resetting is an extension of the bit flip for the integer representation. In this, a
-random value from the set of permissible values is assigned to a randomly chosen
-gene.
-
-#### Swap Mutation
-
-In swap mutation, we select two positions on the chromosome at random, and interchange the values.
+Explainable artificial intelligence (XAI) is a set of processes and methods that allows human
+users to comprehend and trust the results and output created by machine learning algorithms.
+Explainable AI is used to describe an AI model, its expected impact and potential biases.
+It helps characterize model accuracy, fairness, transparency and outcomes in AI-powered decision making.
+Explainable AI is crucial for an organization in building trust and confidence when putting 
+AI models into production. AI explainability also helps an organization adopt a responsible approach to AI development.
 
 <p align="center">
-  <img src="project_images/swap.png" style='width:60%; background-color: white'>
+  <img src="project_images/XAI.png" style='width:50%; background-color: white'>
 </p>
 
-#### Scramble Mutation
+The Explainable AI (XAI) program aims to create a suite of machine learning techniques that:
 
-Scramble mutation is also popular with permutation representations. In this, from the
-entire chromosome, a subset of genes is chosen and their values are scrambled or shuffled.
+    1.Produce more explainable models, while maintaining a high level of learning performance (prediction accuracy)
+    2.Enable human users to understand, appropriately trust, and effectively manage the emerging generation of artificially
+    intelligent partners.
+----
+
+#### 2.1 Shap
+
+SHAP (Shapley Additive Explanations) by Lundberg and Lee (2016) is a method to explain individual
+predictions, based on the game theoretically optimal Shapley values. 
+The goal of SHAP is to explain the prediction of an instance x by computing the contribution of each feature 
+to the prediction. The SHAP explanation method computes Shapley values from coalitional game theory. 
+The feature values of a data instance act as players in a coalition. Shapley values tell us how to fairly 
+distribute the “payout” (= the prediction) among the features. A player can be an individual feature value, 
+e.g. for tabular data. A player can also be a group of feature values. For example to explain an image, pixels
+can be grouped to superpixels and the prediction distributed among them. One innovation that SHAP brings to the 
+table is that the Shapley value explanation is represented as an additive feature attribution method, a linear model.
+That view connects LIME and Shapley values. SHAP specifies the explanation as
+
 
 <p align="center">
-  <img src="project_images/scramble.png" style='width:60%; background-color: white'>
+ <img src="https://latex.codecogs.com/svg.image?g({z}')&space;=&space;\phi&space;_{0}&space;&plus;&space;\sum_{j=1}^{M}\phi&space;_{j}{z}'_{j}" style='width: 10%; background-color: white; '>
+
+where g is the explanation model, 
+<img src="https://latex.codecogs.com/svg.image?{z}'&space;\epsilon&space;&space;\begin{Bmatrix}0&space;&&space;&space;1\\\end{Bmatrix}^{M}" style='width: 4%; background-color: white; '>
+is the coalition vector, M is the maximum coalition size and  
+<img src="https://latex.codecogs.com/svg.image?\phi_{j}&space;\epsilon&space;R" style='width: 3%; background-color: white; '>
+is the feature attribution for a feature j, the Shapley values.
 </p>
 
-#### Inversion Mutation
-
-In inversion mutation, we select a subset of genes like in scramble mutation, but
-instead of shuffling the subset, we merely invert the entire string in the subset.
 
 <p align="center">
-  <img src="project_images/inversion.png" style='width:60%; background-color: white'>
+  <img src="project_images/Shap.png" style='width:50%; background-color: white'>
 </p>
 
-#### Center inverse mutation
+In this project, Shap explains why the model made such a prediction (aesthetic or not aesthetic).
+The top figure shows the result of Shap. The red ones are the segments that contributed to the prediction,
+and the blue ones counteracted to the prediction.
 
-The chromosome is divided into two sections. All genes in each section are copied
-and then inversely placed in the same section of a child.
+-------
+#### 2.2 Lime
 
-#### Thrors Mutation
+The beauty of LIME(Local Interpretable Model-agnostic Explanations) its accessibility and simplicity. 
+The core idea behind LIME though exhaustive is really intuitive and simple.
 
-Three genes are chosen randomly which shall take the different positions i < j < l.
-The gene of the position i becomes in the position j and the one who was at this
-position will take the position l and the gene that has held this position takes the
-position i.
+    1.Model agnosticism refers to the property of LIME using which it can give explanations for any 
+      given supervised learning model by treating as a ‘black-box’ separately. This means that LIME can 
+      handle almost any model that exists out there in the wild!
+    2.Local explanations mean that LIME gives explanations that are locally faithful within the 
+      surroundings or vicinity of the observation/sample being explained.
 
-----------
 
-### Survival Selection
+When given a prediction model and a test sample, LIME does the following steps:
 
-The Survivor Selection Policy determines which individuals are to be kicked out
-and which are to be kept in the next generation. It is crucial as it should ensure that
-the fitter individuals are not kicked out of the population, while at the same time
-diversity should be maintained in the population.
+    1.Sampling and obtaining a surrogate dataset: LIME provides locally faithful explanations around
+      the vicinity of the instance being explained. By default, it produces 5000 samples(in this project num_samples=1000)
+      of the feature vector following the normal distribution. Then it obtains the target variable for these 
+      5000 samples using the prediction model, whose decisions it’s trying to explain.
+    2.Feature Selection from the surrogate dataset: After obtaining the surrogate dataset, it weighs
+      each segment according to how close they are from the original sample/observation. Then it uses a feature
+      selection technique like Lasso to obtain the top important features.
 
-#### Age Based selection
+<p align="center">
+  <img src="project_images/Lime.png" style='width:50%; background-color: white'>
+</p>
 
-In Age-Based Selection, we don’t have a notion of fitness. It is based on the
-premise that each individual is allowed in the population for a finite
-generation where it is allowed to reproduce, after that, it is kicked out of the
-population no matter how good its fitness is.
+In the top figure the green ones are the segments that contributed to the prediction,
+and the red ones counteracted to the prediction.
 
-#### Fitness based selection
+-----
+-----
 
-In this fitness based selection, the children tend to replace the least fit
-individuals in the population. The selection of the least fit individuals may
-be done using a variation of any of the selection policies – tournament
-selection, fitness proportionate selection, etc.
+### 3. Principal Component Analysis (PCA)
+The goal of principal component analysis is to compute the most meaningful
+basis to re-express a data set. X is the original data set, where each column is
+a single sample of our data set. In the case here X is an m x n matrix where m
+is the number of features and n is the number of data points. Let Y be another
+m x n matrix composed by applying a linear transformation P on our X. X is
+the original recorded data set and Y is a re-representation of that data set
+
+
+<p align="center">
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;PX&space;=&space;Y&space;" style='width: 200px; height: 40px; background-color: white; '>
+  </p>
+  
+  The rows of P are a new set of basis vectors for representing columns of X.
+The row vectors {
+    <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}p_1,&space;.&space;.&space;.&space;,&space;p_m&space;" style='width: 55px; height: 9px; background-color: white; '>
+} in the transformation P will become the principal
+components of X.
+  Another thing to know is covariance.
+Covariance measures the degree of
+the linear relationship between two variables. We define the covariance matrix
+C. which is a symmetric m x m matrix, representing the covariance between
+features. The diagonal terms of C are the variance of particular features on the
+span of our data.
+The off - diagonal terms of C are the covariances between
+features. Thus, we want our C to be diagonal, because we want the covariance
+between features to be 0.
+We also want the variances on the diagonal to be
+maximized.
+
+We define a new matrix
+<img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}&space;A&space;\equiv&space;&space;XX^{T}" style='width: 80px; height: 8px; background-color: white; '>
+(the covariance matrix for our X data) where A is symmetric.
+</p>
+
+<p align="center">
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;\bg{white}C_Y=YY^{T}=(PX)(PX)^{T}=PXX^{T}P^{T}=P(XX^{T})P^{T}=PAP^{T}" style='width: 60%; background-color: white; '>
+
+  A symmetric matrix (A) is diagonalized by an orthogonal matrix of its eigenvectors. 
+The matrix P is selected to be a matrix where each row 
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}p_i" style='width: 1%; background-color: white; '>
+ is an eigenvector of 
+ <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}&space;XX^{T}" style='width: 2%; background-color: white; '>
+. So 
+<img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}&space;P&space;=&space;&space;E^{T}" style='width: 3.5%; background-color: white; '>
+
+<p align="rights">
+ <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;A&space;=&space;EDE^{T}&space;" style='width: 80px; height:18px; background-color: white; '>
+
+
+Where D is the Diagonal matrix (which will be the covariance matrix of the output Y).
+ Thus, we redefine 
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;A&space;=&space;P^{T}DP&space;" style='width: 6%; background-color: white; '>
+to
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;EDE^{T}&space;" style='width: 3%; background-color: white; '>
+
+<p align="center">
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;\tiny&space;\bg{white}C_Y&space;=&space;PAP^{T}&space;=&space;P(P^{T}DP)P^{T}=(PP^{T})D(PP^{T})&space;=&space;(PP^{-1})D(PP^{-1})&space;=&space;D" style='width: 60%; background-color: white; '>
+
+
+So the diagonal matrix D is computed, which represents the covariance of our Y output. 
+That means that Y has 0 covariance between features and maximized variance for each feature. 
+For dimensionality reduction the selected P transform matrix contains only a desired number of 
+components (eigenvectors with larger (sorted) eigenvalues). After that the XP dot product 
+is computed and results in Y output..  	
+In our case 8464 was selected to be the number of components to reduce MultiGap features,
+ and 1280 to reduce CNN features. Each of the 2 PCA models was separetly fitted on ~80000 
+training data points (16928x80000 matrix extracted from MultiGap and 2560x80000 matrix 
+extracted from CNN). After the fitting process the models were saved. Now, during each 
+prediction the feature vector is reduced by passing through the corresponding model 
+(pca_cnn or pca_mg), and only after that enters the fully connected part (which was trained 
+on pca-reduced feature vectors for the 80000 data points (16928 -->8464 for MG and 2560 -->1280 for CNN).
+</p>
 
 ------------------
 ------------------

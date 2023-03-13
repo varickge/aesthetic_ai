@@ -1,33 +1,26 @@
 # Usage:
-    1. Create conda environmen
+    1. Create conda environment
         conda create -n deepfl_eval python=3.9.12
-    2. Activate conda environmen
+    2. Activate conda environment
         conda activate deepfl_eval
-    3. Cd to requirements
+    3. Change directory to requirements
         cd requirements
     4. Install all required packages
         bash requirements.sh
     5. Download weights and put to corresponding folders
         Links of weights are in models/link.txt
-    6. Download PCA models and put to corresponding folders
-        Links of weights are in models/link.txt
-    7. Download GA indices and put to corresponding folders
-        Links of indices are in models/link.txt
-    8. Download GA weights and put to corresponding folders
-        Links of indices are in models/link.txt    
     
 # To Use Evaluater for a single image run DeepFL.py 
         Giving the path of image
             -d (--data_path) path_of_image
         For visualizing
             -v (--visualize) True
-        For prediction with PCA
-            -p (--pca) True
-        For prediction with Genetic algorithm
-            -ga (--genetic_algorithm) True
-        *NOTE: Default predicts with GA indices
-        *NOTE: Default value for pca is False, default value for ga is True
-        *NOTE: Don't pass -p True and -ga True (or -p False and -ga False) this will raise errors
+     
+        *NOTE: Default predicts with GA indices trained on all_resied 996 images
         
 # To Use Evaluater for all benchmarks
+        *NOTE: Benchmark data must be in Data/ folder, Data/ and DeepFL_CLI_evaluating/ folders must be in the same directory. 
+               Check before running
+        *NOTE: Download data from https://www.dropbox.com/s/jfqk1jlcsbwuuvu/AesthAI.zip?dl=0 path and unzip in Data/ folder      
         Open jupyter notebook and run Evaluator.ipynb
+        

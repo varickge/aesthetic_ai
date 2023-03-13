@@ -1,3 +1,8 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import argparse
+import logging
 import sklearn
 import imutils
 import random
@@ -23,29 +28,18 @@ from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from pathlib import Path
-
 from sklearn import metrics
 from PIL import Image
 from glob import glob
 from numpy.random import rand
 import pickle as pk
+from sklearn.utils import shuffle
 from sklearn.decomposition import PCA
-
 import keras
 import tensorflow.keras
 import tensorflow.keras.backend as K
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# device = 'cpu'
-# if torch.cuda.is_available:
-#     device = 'cuda'
-
-
 random.seed(5)
-
 
 # Augmentations
 #     Resizing
@@ -547,6 +541,9 @@ def model_inceptionresnet_multigap(input_shape=(None, None, 3),
     else:
         return model
 
+def softmax(vector, T=5):
+    return (tf.math.exp(vector/T)) / tf.math.reduce_sum(tf.math.exp(vector/T))
+
 def fc_model_softmax(input_num=16928):
     input_ = Input(shape=(input_num,))
     x = Dense(2048, kernel_initializer='he_normal', activation='relu')(input_)
@@ -558,7 +555,7 @@ def fc_model_softmax(input_num=16928):
     x = Dense(256, kernel_initializer='he_normal', activation='relu')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.5)(x)
-    pred = Dense(2, activation='softmax')(x)
+    pred = Dense(2, activation=softmax)(x)
 
     model = Model(input_,pred)
     return model
